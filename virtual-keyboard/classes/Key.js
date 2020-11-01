@@ -5,7 +5,7 @@ class Key {
     this.shift = shift;
     this.code = code;
     this.isFnKey = Boolean(
-      small.match(/Ctrl|Shift|Alt|arr|Tab|Back|Enter|Caps|Del/)
+      small.match(/Ctrl|Shift|Alt|arr|Tab|Back|Enter|Caps|Del|Command/)
     );
     if (shift && shift.match(/[^a-zA-Zа-яА-ЯёЁ0-9]/)) {
       this.sub = create("div", "sub", this.shift);
@@ -18,7 +18,8 @@ class Key {
       "keyboard__key",
       [this.sub, this.letter],
       null,
-      ["code", this.code]
+      ["code", this.code],
+      this.isFnKey?["fn","true"]:["fn","false"]
     );
   }
 } 

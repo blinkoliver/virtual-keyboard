@@ -1,7 +1,6 @@
 import { get } from "./utils/storage.js";
 import Keyboard from "./classes/Keyboard.js";
 
-
 const rowsOrder = [
   [
     "Backquote",
@@ -69,14 +68,14 @@ const rowsOrder = [
   ],
   [
     "ControlLeft",
-    "Win",
     "AltLeft",
+    "MetaLeft",
     "Space",
+    "MetaRight",
     "AltRight",
     "ArrowLeft",
     "ArrowDown",
     "ArrowRight",
-    "ControlRight",
   ],
 ];
 const lang = get("kbLang", '"ru"');

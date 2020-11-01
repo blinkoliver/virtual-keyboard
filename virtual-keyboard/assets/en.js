@@ -324,4 +324,14 @@ export default [
     shift: null,
     code: "Win",
   },
+  {
+    small: "Command",
+    shift: null,
+    code: "MetaLeft",
+  },
+  {
+    small: "Command",
+    shift: null,
+    code: "MetaRight",
+  },
 ];
