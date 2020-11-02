@@ -16,6 +16,7 @@ const rowsOrder = [
     "Digit0",
     "Minus",
     "Equal",
+    "Voice",
     "Delete",
   ],
   [
@@ -67,6 +68,7 @@ const rowsOrder = [
     "ShiftRight",
   ],
   [
+    "Lang",
     "ControlLeft",
     "AltLeft",
     "MetaLeft",
@@ -76,6 +78,7 @@ const rowsOrder = [
     "ArrowLeft",
     "ArrowDown",
     "ArrowRight",
+    "Mute",
   ],
 ];
 const lang = get("kbLang", '"ru"');

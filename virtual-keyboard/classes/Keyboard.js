@@ -1,15 +1,15 @@
-import * as storage from "../utils/create.js";
+import * as storage from "../utils/storage.js";
 import create from "../utils/create.js";
 import language from "../assets/index.js";
 import Key from "./Key.js";
 
 const main = create("main", "", [
   create("h1", "title", "RSS Virtual Keyboard"),
-  create("h3", "subtitle", "Windows keyboard that has been made under Linux"),
+  create("h3", "subtitle", "Windows keyboard that has been made under MacOS"),
   create(
     "p",
     "hint",
-    "Use left <kbd>Ctrl</kbd> + <kbd>Alt</kbd> to switch language. Last language saves in localStorage"
+    "Use left <kbd>Ctrl</kbd> + <kbd>Alt</kbd> or Lang button to switch language. Last language saves in localStorage"
   ),
 ]);
 
@@ -76,10 +76,12 @@ export default class Keyboard {
     this.handleEvent({ code, type: e.type });
   };
 
-  // Ф-я обработки событий
-
   handleEvent = (e) => {
     if (e.stopPropagation) e.stopPropagation();
+    const audioFn = document.querySelector(".click-fn");
+    const audioRu = document.querySelector(".click-ru");
+    const audioEn = document.querySelector(".click-en");
+
     const { code, type } = e;
     const keyObj = this.keyButtons.find((key) => key.code === code);
     if (!keyObj) return;
@@ -88,9 +90,18 @@ export default class Keyboard {
     // НАЖАТИЕ КНОПКИ
     if (type.match(/keydown|mousedown/)) {
       if (!type.match(/mouse/)) e.preventDefault();
+      if (
+        code.match(
+          /Ctrl|Shift|Alt|arr|Tab|Back|Enter|Caps|Del|Command|Lang|Mute|Voice/
+        )
+      )
+        audioFn.play();
+      if (code.match(/[a-zA-Z0-9]/)) audioEn.play();
+      if (code.match(/[а-яА-ЯёЁ0-9]/)) audioRu.play();
+
+      if (code.match(/Voice/)) this.voiceRecorder();
 
       if (code.match(/Shift/)) this.shiftKey = true;
-
       if (this.shiftKey) this.switchUpperCase(true);
 
       if (code.match(/Control|Alt|Caps/) && e.repeat) return;
@@ -99,7 +110,7 @@ export default class Keyboard {
       if (code.match(/Alt/)) this.altKey = true;
       if (code.match(/Control/) && this.altKey) this.switchLanguage();
       if (code.match(/Alt/) && this.ctrKey) this.switchLanguage();
-
+      if (code.match(/Lang/)) this.switchLanguage();
       keyObj.keyContainer.classList.add("active");
 
       if (code.match(/Caps/) && !this.isCaps) {
@@ -263,6 +274,34 @@ export default class Keyboard {
       button.letter.innerHTML = keyObj.small;
     });
     if (this.isCaps) this.switchUpperCase(true);
+  };
+
+  voiceRecorder = () => {
+    window.SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const recognition = new SpeechRecognition();
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    let text = document.createTextNode("");
+    const output = document.querySelector(".output");
+    output.appendChild(text);
+
+    recognition.addEventListener("result", (e) => {
+      const transcript = Array.from(e.results)
+        .map((result) => result[0])
+        .map((result) => result.transcript)
+        .join("");
+
+      if (e.results[0].isFinal) {
+        text = document.createTextNode(`${transcript}`);
+        output.appendChild(text);
+      }
+    });
+    recognition.addEventListener("end", recognition.start);
+
+    recognition.start();
   };
 
   printToOutput(keyObj, symbol) {

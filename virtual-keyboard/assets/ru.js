@@ -330,4 +330,15 @@ export default [
     code: "MetaLeft",
   },
   { small: "Command", shift: null, code: "MetaRight" },
+  { small: "Lang", shift: null, code: "Lang" },
+  {
+    small: "Mute",
+    shift: null,
+    code: "Mute",
+  },
+  {
+    small: "Voice",
+    shift: null,
+    code: "Voice",
+  },
 ];
