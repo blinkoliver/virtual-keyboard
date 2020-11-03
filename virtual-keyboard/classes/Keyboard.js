@@ -277,31 +277,50 @@ export default class Keyboard {
   };
 
   voiceRecorder = () => {
+    const voiceButton = document.querySelector("[data-code = 'Voice']");
+    voiceButton.classList.toggle("silent");
+
     window.SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    const recognition = new SpeechRecognition();
+    let recognition = new SpeechRecognition();
     recognition.interimResults = true;
-    recognition.lang = "en-US";
+    recognition.lang = `${storage.get("kbLang")}`;
 
     let text = document.createTextNode("");
     const output = document.querySelector(".output");
     output.appendChild(text);
 
-    recognition.addEventListener("result", (e) => {
-      const transcript = Array.from(e.results)
-        .map((result) => result[0])
-        .map((result) => result.transcript)
-        .join("");
+    if (voiceButton.className === "keyboard__key silent") {
+      recognition.addEventListener("result", (e) => {
+        const transcript = Array.from(e.results)
+          .map((result) => result[0])
+          .map((result) => result.transcript)
+          .join("");
 
-      if (e.results[0].isFinal) {
-        text = document.createTextNode(`${transcript}`);
-        output.appendChild(text);
-      }
-    });
-    recognition.addEventListener("end", recognition.start);
+        if (e.results[0].isFinal) {
+          text = document.createTextNode(`${transcript}`);
+          output.appendChild(text);
+        }
+      });
+      recognition.addEventListener("end", recognition.start);
+      recognition.start();
+    } else {
+      recognition.removeEventListener("result", (e) => {
+        const transcript = Array.from(e.results)
+          .map((result) => result[0])
+          .map((result) => result.transcript)
+          .join("");
 
-    recognition.start();
+        if (e.results[0].isFinal) {
+          text = document.createTextNode(`${transcript}`);
+          output.appendChild(text);
+        }
+      });
+      recognition.removeEventListener("end", recognition.start);
+      recognition.stop();
+      recognition = null;
+    }
   };
 
   printToOutput(keyObj, symbol) {
