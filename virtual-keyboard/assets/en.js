@@ -335,7 +335,7 @@ export default [
     code: "MetaRight",
   },
   {
-    small: "Lang",
+    small: "Lang ",
     shift: null,
     code: "Lang",
   },

@@ -9,7 +9,7 @@ const main = create("main", "", [
   create(
     "p",
     "hint",
-    "Use left <kbd>Ctrl</kbd> + <kbd>Alt</kbd> or Lang button to switch language. Last language saves in localStorage"
+    "Use left <kbd>Ctrl</kbd> + <kbd>Alt</kbd> or Lang button to switch language. Last language saves in localStorage <br/> click to body if you want hide keyboard"
   ),
 ]);
 
@@ -59,10 +59,19 @@ export default class Keyboard {
       });
     });
 
+    let textLang = document.createTextNode(`${storage.get("kbLang")}`);
+    document.querySelector("[data-code='Lang'] .letter").appendChild(textLang);
+
     document.addEventListener("keydown", this.handleEvent);
     document.addEventListener("keyup", this.handleEvent);
     this.container.onmousedown = this.preHandleEvent;
     this.container.onmouseup = this.preHandleEvent;
+  }
+  hideLayout() {
+    document.querySelector(".keyboard").style.visibility = "hidden";
+  }
+  showLayout() {
+    document.querySelector(".keyboard").style.visibility = "visible";
   }
 
   preHandleEvent = (e) => {
@@ -78,9 +87,6 @@ export default class Keyboard {
 
   handleEvent = (e) => {
     if (e.stopPropagation) e.stopPropagation();
-    const audioFn = document.querySelector(".click-fn");
-    const audioRu = document.querySelector(".click-ru");
-    const audioEn = document.querySelector(".click-en");
 
     const { code, type } = e;
     const keyObj = this.keyButtons.find((key) => key.code === code);
@@ -90,14 +96,6 @@ export default class Keyboard {
     // НАЖАТИЕ КНОПКИ
     if (type.match(/keydown|mousedown/)) {
       if (!type.match(/mouse/)) e.preventDefault();
-      if (
-        code.match(
-          /Ctrl|Shift|Alt|arr|Tab|Back|Enter|Caps|Del|Command|Lang|Mute|Voice/
-        )
-      )
-        audioFn.play();
-      if (code.match(/[a-zA-Z0-9]/)) audioEn.play();
-      if (code.match(/[а-яА-ЯёЁ0-9]/)) audioRu.play();
 
       if (code.match(/Voice/)) this.voiceRecorder();
 
@@ -274,6 +272,8 @@ export default class Keyboard {
       button.letter.innerHTML = keyObj.small;
     });
     if (this.isCaps) this.switchUpperCase(true);
+    let textLang = document.createTextNode(`${langAbbr[langIdx]}`);
+    document.querySelector("[data-code='Lang'] .letter").appendChild(textLang);
   };
 
   voiceRecorder = () => {
